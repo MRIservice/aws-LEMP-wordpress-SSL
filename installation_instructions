@@ -1,0 +1,63 @@
+Terraform AWS WordPress web-server with free Let's encrypt encryption 
+
+Prerequisites
+
+Install terraform
+
+AWS aws_access_key_id and  aws_secret_access_key
+I configured terraform to look for them in ~/.aws/credentials
+
+[default]
+aws_access_key_id = Your_key_here
+aws_secret_access_key = Your_key_here
+
+AWS key pair
+I configured terraform to look for them in ~/.aws
+
+------------------------------------------------------------
+Installation
+
+change root MariaDB password in main.tf
+mysql -e "UPDATE mysql.user SET Password = PASSWORD('1#4zupquif7&546JJ') WHERE User = 'root'"
+
+change  wpuser password and/or name in main.tf
+mysql -e "CREATE USER 'wpuser'@'localhost' IDENTIFIED BY '1#zwhip&&ZIP*#'"
+
+terraform init
+terraform apply
+
+Get IP address from terraform output or AWS.
+Go to your domain registrar and configure your IP address in dns management for YourDomain.com
+
+ssh into running EC2 instance
+sudo -s
+ls /etc/php
+to verify current php version
+
+vi /etc/nginx/sites-available/WordPress.conf
+.
+--verify current php current php version
+server unix:/var/run/php/php7.4-fpm.sock;
+.
+--configure your domain
+server_name Mydomain.com www.MyDomain.com;
+.
+.
+:wq!
+
+nginx -s reload
+or
+reboot
+
+finish Lets Encrypt initialization
+ssh back into running EC2 instance
+
+certbot --nginx
+email accept terms answer questions
+
+Go to your site and finish configuration.
+https://Mydomain.com
+
+s3 bucket w/ aws cli can be used for migration file transfer.
+
+
